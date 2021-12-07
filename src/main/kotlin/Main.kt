@@ -19,6 +19,10 @@ import androidx.compose.ui.window.rememberWindowState
 fun main() = application {
 
     val windowState = rememberWindowState(placement = WindowPlacement.Fullscreen)
+    var screenState = remember<ScreenState> { ScreenState.MainMenu }
+    var keyboardLayout = remember { KeyboardLayout.QWERTY }
+
+    var text by remember { mutableStateOf("Hello, World!") }
 
     Window(
         state = windowState,
@@ -33,13 +37,21 @@ fun main() = application {
         },
         undecorated = true
     ) {
-        var text by remember { mutableStateOf("Hello, World!") }
-
         MaterialTheme {
-            Button(onClick = {
-                text = "Hello, Desktop!"
-            }) {
-                Text(text)
+            when (screenState) {
+                ScreenState.MainMenu -> {
+                    Button(onClick = {
+                        text = "Hello, Desktop!"
+                    }) {
+                        Text(text)
+                    }
+                }
+                is ScreenState.TypingTest -> {
+
+                }
+                is ScreenState.TestResult -> {
+
+                }
             }
         }
     }
