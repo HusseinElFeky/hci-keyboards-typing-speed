@@ -10,10 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.*
@@ -39,10 +36,67 @@ fun main() = application {
         onPreviewKeyEvent = {
             if (it.type == KeyEventType.KeyDown && it.key == Key.Escape) {
                 exitApplication()
-                true
-            } else {
-                false
+                return@Window true
             }
+
+            if (screenState.value is ScreenState.TypingTest) {
+                val state = screenState.value as ScreenState.TypingTest
+                val nextIndex = state.currentIndex + 1
+
+                if (it.type == KeyEventType.KeyDown) {
+                    var pressedKey = when (it.key) {
+                        Key.A -> 'a'
+                        Key.B -> 'b'
+                        Key.C -> 'c'
+                        Key.D -> 'd'
+                        Key.E -> 'e'
+                        Key.F -> 'f'
+                        Key.G -> 'g'
+                        Key.H -> 'h'
+                        Key.I -> 'i'
+                        Key.J -> 'j'
+                        Key.K -> 'k'
+                        Key.L -> 'l'
+                        Key.M -> 'm'
+                        Key.N -> 'n'
+                        Key.O -> 'o'
+                        Key.P -> 'p'
+                        Key.Q -> 'q'
+                        Key.R -> 'r'
+                        Key.S -> 's'
+                        Key.T -> 't'
+                        Key.U -> 'u'
+                        Key.V -> 'v'
+                        Key.W -> 'w'
+                        Key.X -> 'x'
+                        Key.Y -> 'y'
+                        Key.Z -> 'z'
+                        Key.Spacebar -> ' '
+                        Key.Period -> '.'
+                        Key.Comma -> ','
+                        else -> '\u0000'
+                    }
+
+                    if (it.isShiftPressed) pressedKey = pressedKey.uppercaseChar()
+                    if (state.paragraph[state.currentIndex] == pressedKey) {
+                        if (nextIndex == state.paragraph.length) {
+                            screenState.value = ScreenState.TestResult.create(
+                                timeTaken = 46,
+                                totalWords = state.paragraph.split(" ").size + 1,
+                                correctCharacters = state.paragraph.length,
+                                incorrectCharacters = 6
+                            )
+                        } else {
+                            screenState.value = state.copy(currentIndex = nextIndex)
+                        }
+                    } else {
+                        screenState.value = state.copy(incorrectCharacters = state.incorrectCharacters + 1)
+                    }
+                }
+                return@Window true
+            }
+
+            false
         },
         undecorated = true
     ) {

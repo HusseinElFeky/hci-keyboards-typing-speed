@@ -2,7 +2,7 @@ sealed class ScreenState {
 
     object MainMenu : ScreenState()
 
-    class TypingTest(
+    data class TypingTest(
         val paragraph: String,
         val currentIndex: Int,
         val incorrectCharacters: Int,
@@ -21,7 +21,7 @@ sealed class ScreenState {
         }
     }
 
-    class TestResult(
+    data class TestResult(
         val timeTaken: Int,
         val wordsPerMinute: Float,
         val accuracy: Float
@@ -30,7 +30,7 @@ sealed class ScreenState {
         companion object {
             fun create(timeTaken: Int, totalWords: Int, correctCharacters: Int, incorrectCharacters: Int): TestResult {
                 val totalCharacters = correctCharacters + incorrectCharacters
-                val wordsPerMinute = totalWords * 60 / timeTaken.toFloat()
+                val wordsPerMinute = totalWords / (timeTaken / 60.0f)
                 return TestResult(
                     timeTaken = timeTaken,
                     wordsPerMinute = wordsPerMinute,
