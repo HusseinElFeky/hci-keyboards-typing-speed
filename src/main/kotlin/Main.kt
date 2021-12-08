@@ -151,26 +151,66 @@ fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: Mut
             fontSize = 60.sp,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.weight(1.0f))
-        Text(
-            modifier = Modifier.padding(100.dp, 0.dp),
-            text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = Color(0xFF499C54))) {
-                    append(text.substring(0, currentIndex))
-                }
-                withStyle(style = SpanStyle(color = Color.Blue)) {
-                    append(text.substring(currentIndex, nextIndex))
-                }
-                append(text.substring(nextIndex))
-            },
-            textAlign = TextAlign.Justify,
-            fontSize = 50.sp
-        )
-        Spacer(modifier = Modifier.weight(1.0f))
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier.padding(100.dp, 0.dp),
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = Color(0xFF499C54))) {
+                        append(text.substring(0, currentIndex))
+                    }
+                    withStyle(style = SpanStyle(color = Color.Blue)) {
+                        append(text.substring(currentIndex, nextIndex))
+                    }
+                    append(text.substring(nextIndex))
+                },
+                textAlign = TextAlign.Justify,
+                fontSize = 50.sp
+            )
+        }
     }
 }
 
 @Composable
 fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: MutableState<KeyboardLayout>) {
-
+    val state = screenState.value as ScreenState.TestResult
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            modifier = Modifier.padding(0.dp, 40.dp, 0.dp, 0.dp),
+            text = "${keyboardLayout.value.name} Test",
+            textAlign = TextAlign.Center,
+            fontSize = 60.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.padding(40.dp),
+                text = "Time Taken: ${state.timeTaken} sec",
+                textAlign = TextAlign.Center,
+                fontSize = 40.sp
+            )
+            Text(
+                modifier = Modifier.padding(40.dp),
+                text = "Speed: ${state.wordsPerMinute} wpm",
+                textAlign = TextAlign.Center,
+                fontSize = 40.sp
+            )
+            Text(
+                modifier = Modifier.padding(40.dp),
+                text = "Accuracy: ${state.accuracy * 100}%",
+                textAlign = TextAlign.Center,
+                fontSize = 40.sp
+            )
+        }
+    }
 }

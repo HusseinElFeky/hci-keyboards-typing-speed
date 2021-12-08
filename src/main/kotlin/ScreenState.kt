@@ -24,6 +24,19 @@ sealed class ScreenState {
     class TestResult(
         val timeTaken: Int,
         val wordsPerMinute: Float,
-        val errorRate: Float
-    ) : ScreenState()
+        val accuracy: Float
+    ) : ScreenState() {
+
+        companion object {
+            fun create(timeTaken: Int, totalWords: Int, correctCharacters: Int, incorrectCharacters: Int): TestResult {
+                val totalCharacters = correctCharacters + incorrectCharacters
+                val wordsPerMinute = totalWords * 60 / timeTaken.toFloat()
+                return TestResult(
+                    timeTaken = timeTaken,
+                    wordsPerMinute = wordsPerMinute,
+                    accuracy = correctCharacters / totalCharacters.toFloat()
+                )
+            }
+        }
+    }
 }
