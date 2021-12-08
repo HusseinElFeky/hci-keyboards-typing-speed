@@ -3,10 +3,10 @@ sealed class ScreenState {
     object MainMenu : ScreenState()
 
     class TypingTest(
-        paragraph: String,
-        currentIndex: Int,
-        incorrectCharacters: Int,
-        timeTaken: Int
+        val paragraph: String,
+        val currentIndex: Int,
+        val incorrectCharacters: Int,
+        val timeTaken: Int
     ) : ScreenState() {
 
         companion object {
@@ -22,8 +22,8 @@ sealed class ScreenState {
     }
 
     class TestResult(
-        timeTaken: Int,
-        wordsPerMinute: Float,
-        errorRate: Float
+        val timeTaken: Int,
+        val wordsPerMinute: Float,
+        val errorRate: Float
     ) : ScreenState()
 }

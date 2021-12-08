@@ -16,8 +16,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -135,7 +134,40 @@ fun renderMainMenu(screenState: MutableState<ScreenState>, keyboardLayout: Mutab
 
 @Composable
 fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: MutableState<KeyboardLayout>) {
+    val state = screenState.value as ScreenState.TypingTest
+    val text = state.paragraph
+    val currentIndex = state.currentIndex
+    val nextIndex = state.currentIndex + 1
 
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            modifier = Modifier.padding(0.dp, 40.dp, 0.dp, 0.dp),
+            text = "${keyboardLayout.value.name} Test",
+            textAlign = TextAlign.Center,
+            fontSize = 60.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.weight(1.0f))
+        Text(
+            modifier = Modifier.padding(100.dp, 0.dp),
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = Color(0xFF499C54))) {
+                    append(text.substring(0, currentIndex))
+                }
+                withStyle(style = SpanStyle(color = Color.Blue)) {
+                    append(text.substring(currentIndex, nextIndex))
+                }
+                append(text.substring(nextIndex))
+            },
+            textAlign = TextAlign.Justify,
+            fontSize = 50.sp
+        )
+        Spacer(modifier = Modifier.weight(1.0f))
+    }
 }
 
 @Composable
