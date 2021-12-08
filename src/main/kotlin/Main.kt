@@ -104,7 +104,7 @@ fun renderMainMenu(screenState: MutableState<ScreenState>, keyboardLayout: Mutab
                     )
                     ClickableText(
                         text = AnnotatedString(layout.name),
-                        style = TextStyle(fontSize = 20.sp),
+                        style = TextStyle(fontSize = 24.sp),
                         onClick = {
                             keyboardLayout.value = layout
                         }
@@ -112,6 +112,11 @@ fun renderMainMenu(screenState: MutableState<ScreenState>, keyboardLayout: Mutab
                 }
             }
         }
+        Image(
+            modifier = Modifier.height(400.dp),
+            contentDescription = "Keyboard Layout",
+            painter = painterResource("images/${keyboardLayout.value.imageName}")
+        )
         Button(
             modifier = Modifier.wrapContentHeight(),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4C597D)),
