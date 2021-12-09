@@ -9,12 +9,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,6 +26,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import model.HighlightedTextPath
 
 @ExperimentalComposeUiApi
 fun main() = application {
@@ -189,9 +194,16 @@ fun renderMainMenu(screenState: MutableState<ScreenState>, keyboardLayout: Mutab
 @Composable
 fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: MutableState<KeyboardLayout>) {
     val state = screenState.value as ScreenState.TypingTest
+
     val text = state.paragraph
+
     val currentIndex = state.currentIndex
     val nextIndex = state.currentIndex + 1
+
+    val highlightedTextPath = remember { mutableStateOf(HighlightedTextPath()) }
+
+    val greenColor = Color(0xFF499C54)
+    val blueColor = Color.Blue
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -210,18 +222,31 @@ fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: Mut
             contentAlignment = Alignment.Center
         ) {
             Text(
-                modifier = Modifier.padding(100.dp, 0.dp),
+                modifier = Modifier.padding(100.dp, 0.dp).drawBehind {
+                    highlightedTextPath.value.apply {
+                        drawPath(greenPath, style = Fill, color = greenColor.copy(alpha = 0.1f))
+                        drawPath(bluePath, style = Fill, color = blueColor.copy(alpha = 0.1f))
+                    }
+                },
                 text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = Color(0xFF499C54))) {
+                    withStyle(style = SpanStyle(color = greenColor)) {
                         append(text.substring(0, currentIndex))
                     }
-                    withStyle(style = SpanStyle(color = Color.Blue)) {
+                    withStyle(style = SpanStyle(color = blueColor)) {
                         append(text.substring(currentIndex, nextIndex))
                     }
                     append(text.substring(nextIndex))
                 },
-                textAlign = TextAlign.Justify,
-                fontSize = 50.sp
+                textAlign = TextAlign.Center,
+                fontSize = 50.sp,
+                fontFamily = FontFamily(Font("fonts/Inconsolata-Regular.ttf")),
+                letterSpacing = 8.sp,
+                onTextLayout = { layoutResult ->
+                    highlightedTextPath.value = HighlightedTextPath(
+                        greenPath = layoutResult.getBoxesPath(0, currentIndex),
+                        bluePath = layoutResult.getBoxesPath(currentIndex, nextIndex)
+                    )
+                },
             )
         }
     }
