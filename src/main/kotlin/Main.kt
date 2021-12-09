@@ -94,7 +94,7 @@ fun main() = application {
                                 timeTakenMs = state.timeTakenMs,
                                 totalWords = state.paragraph.split(" ").size + 1,
                                 correctCharacters = state.paragraph.length,
-                                incorrectCharacters = 6
+                                incorrectCharacters = state.incorrectCharacters
                             )
                         } else {
                             screenState.value = state.copy(currentIndex = nextIndex)
