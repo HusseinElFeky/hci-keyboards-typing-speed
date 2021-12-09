@@ -26,7 +26,12 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import model.HighlightedTextPath
+import util.TimestampFormatter
 
 @ExperimentalComposeUiApi
 fun main() = application {
@@ -86,7 +91,7 @@ fun main() = application {
                     if (state.paragraph[state.currentIndex] == pressedKey) {
                         if (nextIndex == state.paragraph.length) {
                             screenState.value = ScreenState.TestResult.create(
-                                timeTaken = 46,
+                                timeTakenMs = state.timeTakenMs,
                                 totalWords = state.paragraph.split(" ").size + 1,
                                 correctCharacters = state.paragraph.length,
                                 incorrectCharacters = 6
@@ -180,6 +185,15 @@ fun renderMainMenu(screenState: MutableState<ScreenState>, keyboardLayout: Mutab
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4C597D)),
             onClick = {
                 screenState.value = ScreenState.TypingTest.create()
+                val startTime = System.currentTimeMillis()
+                CoroutineScope(Dispatchers.Default).launch {
+                    while (screenState.value is ScreenState.TypingTest) {
+                        delay(20L)
+                        screenState.value = (screenState.value as ScreenState.TypingTest).copy(
+                            timeTakenMs = System.currentTimeMillis() - startTime
+                        )
+                    }
+                }
             }
         ) {
             Text(
@@ -196,6 +210,7 @@ fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: Mut
     val state = screenState.value as ScreenState.TypingTest
 
     val text = state.paragraph
+    val monospaceFont = FontFamily(Font("fonts/Inconsolata-Regular.ttf"))
 
     val currentIndex = state.currentIndex
     val nextIndex = state.currentIndex + 1
@@ -216,6 +231,14 @@ fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: Mut
             textAlign = TextAlign.Center,
             fontSize = 60.sp,
             fontWeight = FontWeight.Bold
+        )
+        Text(
+            modifier = Modifier.padding(0.dp, 20.dp, 0.dp, 0.dp),
+            text = "Time: ${TimestampFormatter.format(state.timeTakenMs)}",
+            textAlign = TextAlign.Center,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = monospaceFont
         )
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -239,7 +262,7 @@ fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: Mut
                 },
                 textAlign = TextAlign.Center,
                 fontSize = 50.sp,
-                fontFamily = FontFamily(Font("fonts/Inconsolata-Regular.ttf")),
+                fontFamily = monospaceFont,
                 letterSpacing = 8.sp,
                 onTextLayout = { layoutResult ->
                     highlightedTextPath.value = HighlightedTextPath(
@@ -274,7 +297,7 @@ fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: Mut
         ) {
             Text(
                 modifier = Modifier.padding(40.dp),
-                text = "Time Taken: ${state.timeTaken} sec",
+                text = "Time Taken: ${TimestampFormatter.format(state.timeTakenMs)}",
                 textAlign = TextAlign.Center,
                 fontSize = 40.sp
             )

@@ -6,7 +6,7 @@ sealed class ScreenState {
         val paragraph: String,
         val currentIndex: Int,
         val incorrectCharacters: Int,
-        val timeTaken: Int
+        val timeTakenMs: Long
     ) : ScreenState() {
 
         companion object {
@@ -15,24 +15,29 @@ sealed class ScreenState {
                     paragraph = "Technology refers to the practical application of scientific knowledge for a purpose. It also includes the capability and skills required to apply the knowledge. Technology enhances the usefulness of goods and services in a safe manner.",
                     currentIndex = 0,
                     incorrectCharacters = 0,
-                    timeTaken = 0
+                    timeTakenMs = 0
                 )
             }
         }
     }
 
     data class TestResult(
-        val timeTaken: Int,
+        val timeTakenMs: Long,
         val wordsPerMinute: Float,
         val accuracy: Float
     ) : ScreenState() {
 
         companion object {
-            fun create(timeTaken: Int, totalWords: Int, correctCharacters: Int, incorrectCharacters: Int): TestResult {
+            fun create(
+                timeTakenMs: Long,
+                totalWords: Int,
+                correctCharacters: Int,
+                incorrectCharacters: Int
+            ): TestResult {
                 val totalCharacters = correctCharacters + incorrectCharacters
-                val wordsPerMinute = totalWords / (timeTaken / 60.0f)
+                val wordsPerMinute = totalWords / (timeTakenMs / 60.0f)
                 return TestResult(
-                    timeTaken = timeTaken,
+                    timeTakenMs = timeTakenMs,
                     wordsPerMinute = wordsPerMinute,
                     accuracy = correctCharacters / totalCharacters.toFloat()
                 )
