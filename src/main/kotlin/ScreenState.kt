@@ -1,3 +1,6 @@
+import util.TimestampFormatter
+import java.text.DecimalFormat
+
 sealed class ScreenState {
 
     object MainMenu : ScreenState()
@@ -27,6 +30,18 @@ sealed class ScreenState {
         val accuracy: Float
     ) : ScreenState() {
 
+        fun getTimestampFormatted(): String {
+            return TimestampFormatter.formatAsElapsedTime(timeTakenMs)
+        }
+
+        fun getWordsPerMinuteFormatted(): String {
+            return DecimalFormat("0.00 wpm").format(wordsPerMinute)
+        }
+
+        fun getAccuracyPercentageFormatted(): String {
+            return DecimalFormat("0.00%").format(accuracy)
+        }
+
         companion object {
             fun create(
                 timeTakenMs: Long,
@@ -35,7 +50,7 @@ sealed class ScreenState {
                 incorrectCharacters: Int
             ): TestResult {
                 val totalCharacters = correctCharacters + incorrectCharacters
-                val wordsPerMinute = totalWords / (timeTakenMs / 60.0f)
+                val wordsPerMinute = totalWords / (timeTakenMs / (1000f * 60f))
                 return TestResult(
                     timeTakenMs = timeTakenMs,
                     wordsPerMinute = wordsPerMinute,

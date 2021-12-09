@@ -92,7 +92,7 @@ fun main() = application {
                         if (nextIndex == state.paragraph.length) {
                             screenState.value = ScreenState.TestResult.create(
                                 timeTakenMs = state.timeTakenMs,
-                                totalWords = state.paragraph.split(" ").size + 1,
+                                totalWords = state.paragraph.split(" ").size,
                                 correctCharacters = state.paragraph.length,
                                 incorrectCharacters = state.incorrectCharacters
                             )
@@ -234,7 +234,7 @@ fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: Mut
         )
         Text(
             modifier = Modifier.padding(0.dp, 20.dp, 0.dp, 0.dp),
-            text = "Time: ${TimestampFormatter.format(state.timeTakenMs)}",
+            text = "Time: ${TimestampFormatter.formatAsTimer(state.timeTakenMs)}",
             textAlign = TextAlign.Center,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
@@ -278,6 +278,7 @@ fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: Mut
 @Composable
 fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: MutableState<KeyboardLayout>) {
     val state = screenState.value as ScreenState.TestResult
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -290,29 +291,56 @@ fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: Mut
             fontSize = 60.sp,
             fontWeight = FontWeight.Bold
         )
-        Column(
+        Row(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(40.dp),
-                text = "Time Taken: ${TimestampFormatter.format(state.timeTakenMs)}",
-                textAlign = TextAlign.Center,
-                fontSize = 40.sp
-            )
-            Text(
-                modifier = Modifier.padding(40.dp),
-                text = "Speed: ${state.wordsPerMinute} wpm",
-                textAlign = TextAlign.Center,
-                fontSize = 40.sp
-            )
-            Text(
-                modifier = Modifier.padding(40.dp),
-                text = "Accuracy: ${state.accuracy * 100}%",
-                textAlign = TextAlign.Center,
-                fontSize = 40.sp
-            )
+            Column(
+                modifier = Modifier.fillMaxHeight().wrapContentWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    modifier = Modifier.padding(40.dp),
+                    text = "Time Taken:",
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    modifier = Modifier.padding(40.dp),
+                    text = "Speed:",
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    modifier = Modifier.padding(40.dp),
+                    text = "Accuracy:",
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Column(
+                modifier = Modifier.fillMaxHeight().wrapContentWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    modifier = Modifier.padding(40.dp),
+                    text = state.getTimestampFormatted(),
+                    fontSize = 40.sp
+                )
+                Text(
+                    modifier = Modifier.padding(40.dp),
+                    text = state.getWordsPerMinuteFormatted(),
+                    fontSize = 40.sp
+                )
+                Text(
+                    modifier = Modifier.padding(40.dp),
+                    text = state.getAccuracyPercentageFormatted(),
+                    fontSize = 40.sp
+                )
+            }
         }
     }
 }
