@@ -281,7 +281,7 @@ fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: Mut
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -292,12 +292,12 @@ fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: Mut
             fontWeight = FontWeight.Bold
         )
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.wrapContentHeight(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.fillMaxHeight().wrapContentWidth(),
+                modifier = Modifier.wrapContentWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -321,7 +321,7 @@ fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: Mut
                 )
             }
             Column(
-                modifier = Modifier.fillMaxHeight().wrapContentWidth(),
+                modifier = Modifier.wrapContentWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End
             ) {
@@ -341,6 +341,19 @@ fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: Mut
                     fontSize = 40.sp
                 )
             }
+        }
+        Button(
+            modifier = Modifier.wrapContentHeight(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4C597D)),
+            onClick = {
+                screenState.value = ScreenState.MainMenu
+            }
+        ) {
+            Text(
+                text = "Return To Main Menu",
+                color = Color.White,
+                fontSize = 40.sp
+            )
         }
     }
 }
