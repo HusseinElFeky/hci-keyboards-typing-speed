@@ -26,10 +26,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import model.HighlightedTextPath
 import util.TimestampFormatter
 
@@ -39,6 +36,7 @@ fun main() = application {
     val windowState = rememberWindowState(placement = WindowPlacement.Fullscreen)
     val screenState = remember { mutableStateOf<ScreenState>(ScreenState.MainMenu) }
     val keyboardLayout = remember { mutableStateOf(KeyboardLayout.QWERTY) }
+    val timerJob = remember { mutableStateOf<Job?>(null) }
 
     Window(
         state = windowState,
@@ -90,6 +88,8 @@ fun main() = application {
                     if (it.isShiftPressed) pressedKey = pressedKey.uppercaseChar()
                     if (state.paragraph[state.currentIndex] == pressedKey) {
                         if (nextIndex == state.paragraph.length) {
+                            timerJob.value?.cancel()
+                            timerJob.value = null
                             screenState.value = ScreenState.TestResult.create(
                                 timeTakenMs = state.timeTakenMs,
                                 totalWords = state.paragraph.split(" ").size,
@@ -119,7 +119,7 @@ fun main() = application {
                 )
                 when (screenState.value) {
                     ScreenState.MainMenu -> {
-                        renderMainMenu(screenState, keyboardLayout)
+                        renderMainMenu(screenState, keyboardLayout, timerJob)
                     }
                     is ScreenState.TypingTest -> {
                         renderTypingTest(screenState, keyboardLayout)
@@ -134,7 +134,11 @@ fun main() = application {
 }
 
 @Composable
-fun renderMainMenu(screenState: MutableState<ScreenState>, keyboardLayout: MutableState<KeyboardLayout>) {
+fun renderMainMenu(
+    screenState: MutableState<ScreenState>,
+    keyboardLayout: MutableState<KeyboardLayout>,
+    timerJob: MutableState<Job?>
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
@@ -185,9 +189,11 @@ fun renderMainMenu(screenState: MutableState<ScreenState>, keyboardLayout: Mutab
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4C597D)),
             onClick = {
                 screenState.value = ScreenState.TypingTest.create()
+
+                // Start the test timer.
                 val startTime = System.currentTimeMillis()
-                CoroutineScope(Dispatchers.Default).launch {
-                    while (screenState.value is ScreenState.TypingTest) {
+                timerJob.value = CoroutineScope(Dispatchers.Default).launch {
+                    while (true) {
                         delay(20L)
                         screenState.value = (screenState.value as ScreenState.TypingTest).copy(
                             timeTakenMs = System.currentTimeMillis() - startTime
