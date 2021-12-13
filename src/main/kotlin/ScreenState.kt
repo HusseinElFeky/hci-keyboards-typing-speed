@@ -1,3 +1,4 @@
+import input.KeyboardInputMapper
 import util.TimestampFormatter
 import java.text.DecimalFormat
 
@@ -9,16 +10,18 @@ sealed class ScreenState {
         val paragraph: String,
         val currentIndex: Int,
         val incorrectCharacters: Int,
-        val timeTakenMs: Long
+        val timeTakenMs: Long,
+        val keyboardInputMapper: KeyboardInputMapper
     ) : ScreenState() {
 
         companion object {
-            fun create(): TypingTest {
+            fun create(keyboardInputMapper: KeyboardInputMapper): TypingTest {
                 return TypingTest(
                     paragraph = "Technology refers to the practical application of scientific knowledge for a purpose. It also includes the capability and skills required to apply the knowledge. Technology enhances the usefulness of goods and services in a safe manner.",
                     currentIndex = 0,
                     incorrectCharacters = 0,
-                    timeTakenMs = 0
+                    timeTakenMs = 0,
+                    keyboardInputMapper = keyboardInputMapper
                 )
             }
         }

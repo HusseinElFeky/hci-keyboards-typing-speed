@@ -52,38 +52,7 @@ fun main() = application {
                 val nextIndex = state.currentIndex + 1
 
                 if (it.type == KeyEventType.KeyDown) {
-                    var pressedKey = when (it.key) {
-                        Key.A -> 'a'
-                        Key.B -> 'b'
-                        Key.C -> 'c'
-                        Key.D -> 'd'
-                        Key.E -> 'e'
-                        Key.F -> 'f'
-                        Key.G -> 'g'
-                        Key.H -> 'h'
-                        Key.I -> 'i'
-                        Key.J -> 'j'
-                        Key.K -> 'k'
-                        Key.L -> 'l'
-                        Key.M -> 'm'
-                        Key.N -> 'n'
-                        Key.O -> 'o'
-                        Key.P -> 'p'
-                        Key.Q -> 'q'
-                        Key.R -> 'r'
-                        Key.S -> 's'
-                        Key.T -> 't'
-                        Key.U -> 'u'
-                        Key.V -> 'v'
-                        Key.W -> 'w'
-                        Key.X -> 'x'
-                        Key.Y -> 'y'
-                        Key.Z -> 'z'
-                        Key.Spacebar -> ' '
-                        Key.Period -> '.'
-                        Key.Comma -> ','
-                        else -> '\u0000'
-                    }
+                    var pressedKey = state.keyboardInputMapper.mapKeyToCharacter(it.key)
 
                     if (it.isShiftPressed) pressedKey = pressedKey.uppercaseChar()
                     if (state.paragraph[state.currentIndex] == pressedKey) {
@@ -133,6 +102,7 @@ fun main() = application {
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun renderMainMenu(
     screenState: MutableState<ScreenState>,
@@ -188,7 +158,7 @@ fun renderMainMenu(
             modifier = Modifier.wrapContentHeight(),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4C597D)),
             onClick = {
-                screenState.value = ScreenState.TypingTest.create()
+                screenState.value = ScreenState.TypingTest.create(keyboardLayout.value.toKeyboardInputMapper())
 
                 // Start the test timer.
                 val startTime = System.currentTimeMillis()
@@ -211,6 +181,7 @@ fun renderMainMenu(
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: MutableState<KeyboardLayout>) {
     val state = screenState.value as ScreenState.TypingTest
@@ -281,6 +252,7 @@ fun renderTypingTest(screenState: MutableState<ScreenState>, keyboardLayout: Mut
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun renderTestResult(screenState: MutableState<ScreenState>, keyboardLayout: MutableState<KeyboardLayout>) {
     val state = screenState.value as ScreenState.TestResult
