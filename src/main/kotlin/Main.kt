@@ -39,6 +39,7 @@ fun main() = application {
     val timerJob = remember { mutableStateOf<Job?>(null) }
 
     Window(
+        title = "Typing Speed Test",
         state = windowState,
         onCloseRequest = ::exitApplication,
         onPreviewKeyEvent = {
