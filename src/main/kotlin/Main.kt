@@ -117,7 +117,7 @@ fun renderMainMenu(
     ) {
         Text(
             modifier = Modifier.wrapContentHeight(),
-            text = "Keyboards \uD83E\uDD37\u200D♂️\uD83E\uDD37\u200D♂️",
+            text = "Typing Speed Test",
             textAlign = TextAlign.Center,
             fontSize = 60.sp,
             fontWeight = FontWeight.ExtraBold
